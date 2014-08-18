@@ -1,28 +1,39 @@
 require 'spec_helper'
 
-describe Video do
-  describe  'search_by_number ' do
-    it 'returns an empty array if there is not match' do
-      t1 = Video.create(title: 2345)
-      t2 = Video.create(title: 2323)
-      expect(Video.search_by_number('2346')).to eq([])
-    end
+describe VideoSearch do
 
-    it 'returns an array of one video  for an exact match' do
-      t1 = Video.create(title: 2345)
-      t2 = Video.create(title: 2323)
-      expect(Video.search_by_number(2345)).to eq([t1])
-    end
-
-    it 'returns an empty array for a search with a empty string' do
-      t1 = Video.create( title: 2345 )
-      t2 = Video.create( title: 2323 )
-      expect(Video.search_by_number('')).to eq([])
+  describe 'initialized' do
+    it 'can be initialized with a custom-param' do
+      v1 = Video.create( title: 2345 )
+      vs = VideoSearch.new(v1.title)
+      expect(vs.title).to eq(2345)
     end
   end
 
 
-  describe 'find the next sampler' do
+  describe 'find by title' do
+      it ' it returns nil is there not match ' do
+        v1 = Video.create( title: 2345 )
+        expect(VideoSearch.find_by_title(1234)).to eq(nil)
+      end
+      it ' returns the right instance object for an exact match ' do
+        v1 = Video.create( title: 2345 )
+        expect(Video.find_by_title(v1.title)).to eq(v1)
+      end
+
+      #some toughts:
+      # Im wondering if I should get nil if the user doesnt add content?
+      # Right now I'm getting an empty array  which is not a falsy answer
+      #it has to do with spec line: 65, righ there Im doing a check
+
+
+      it ' returns an empty array for a search with an empty string' do
+        expect(VideoSearch.find_by_title('')).to eq([])
+      end
+  end
+
+
+  describe 'find the next video-sampler' do
 
     it ' returns nil if there is not match in the video table' do
 
@@ -31,9 +42,7 @@ describe Video do
       v3 = Video.create( title: 23232, start_time: '2014-04-24 17:10:00', start_point: 'X', end_time: '2014-04-24 20:10:00', end_point: 'B')
       v4 = Video.create( title: 22435, start_time: '2014-04-24 17:10:00', start_point: 'Z', end_time: '2014-04-24 20:10:00', end_point: 'W')
 
-
-      expect(Video.find_next_sampler(v4.end_time, v4.end_point)).to eq(nil)
-
+      expect(VideoSearch.find_next_sampler(v4.end_time, v4.end_point)).to eq(nil)
     end
 
     it ' returns the next video-sampler if there is an exact match, following the given query-conditions' do
@@ -45,8 +54,17 @@ describe Video do
       v5 = Video.create( title: 24545, start_time: '2014-04-24 22:15:00', start_point: 'BC', end_time: '2014-04-24 22:20:00', end_point: 'RI' )
       v6 = Video.create( title: 23545, start_time: '2014-04-24 23:15:00', start_point: 'XX', end_time: '2014-04-25 00:10:00', end_point: 'E' )
 
-      expect(Video.find_next_sampler(v5.end_time, v5.end_point)).to eq(v2)
+      expect(VideoSearch.find_next_sampler(v5.end_time, v5.end_point)).to eq(v2)
     end
   end
+
+  # my last question has to do with this
+  #right if the user doesnt type anyting I get an empty array
+  #an empty array is wont be false for the contition
+  #Im wondering if it's wrong to get back an empty array instead of nil
+  describe ' find then whole collection of samplers ' do
+
+  end
+
 
 end
