@@ -1,43 +1,46 @@
 class VideoSearch
 
-  attr_accessor :title
+  attr_accessor :title, :samplers
 
   def initialize(params)
     @title = params
+    @samplers = []
 
   end
 
-  def self.find_by_title(title)
-    return [] if title.blank?
-    Video.where(title: title).first
+  def find_all_by_title(title)
+    if title.blank?
+      raise Exception
+      return false
+    end
+    if Video.where(title: title).first.nil?
+      return false
+    else
+      Video.where(title: title).first
+    end
   end
 
 
-  def self.find_next_sampler(end_time, end_point)
-    # one thought how can I test if I use wrong sql-semantic, I think dubbled equal (== vs. =) is not used in sql uhn? ?
-    Video.where("start_time >= ? AND start_point = ?" , "#{ end_time }", "#{ end_point }" ).first
+  def find_next_sampler(end_time, end_point)
+    if Video.where("start_time >= ? AND start_point = ?" , "#{ end_time }", "#{ end_point }" ).first.nil?
+      return false
+    else
+      Video.where("start_time >= ? AND start_point = ?" , "#{ end_time }", "#{ end_point }" ).first
+    end
   end
 
   def find_the_whole_collection(title)
 
-    if find_by_title(title)
-      sample = find_by_title(title)
-      samplers = [sample] #add the title as the first sample
-
-      # we search first to see if we find a next sampler
-      # we reassign the sample variable to the new sample found
-      i = 0
-      while i <= Video.all.count do
-        if( sample = find_next_sampler(samplers[-1].end_time, samplers[-1].end_point) )
-          samplers << sample
-        end
-        i += 1
+    @sampler = find_all_by_title(title)
+    @samplers = [@sampler] #add the video as the first sample
+    i = 0
+    while i <= Video.all.count do
+      if ( @sampler = find_next_sampler(@samplers[-1].end_time, @samplers[-1].end_point) )
+        @samplers << @sampler
       end
-      # at the end it returns the whole video with its samplers
-      return samplers
-    else
-      #something
+      i + 1 #  this is an error . I'm interesting to raise, testing this part of the method
     end
+      return @samplers
   end
 
 
@@ -62,5 +65,8 @@ class VideoSearch
   #   flash[:error] = 'Try again please'
   #   render :index
   # end
+
+
+  # one thought how can I test if I use wrong sql-semantic, I think dubbled equal (== vs. =) is not used in sql uhn? ?
 
 end
