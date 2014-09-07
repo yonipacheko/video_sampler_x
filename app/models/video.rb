@@ -8,8 +8,9 @@ class Video < ActiveRecord::Base
 
   end
 
-  def video_search(params)
-    VideoSearch.new(params)
+  def self.video_search(params)
+    samplers = VideoSearch.new(params)
+    samplers.find_the_whole_collection
   end
 
 

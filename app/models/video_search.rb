@@ -8,9 +8,9 @@ class VideoSearch
 
   end
 
-  def find_all_by_title(title)
+  def find_all_by_title
     if title.blank?
-      raise Exception
+      #raise
       return false
     end
     if Video.where(title: title).first.nil?
@@ -29,20 +29,27 @@ class VideoSearch
     end
   end
 
-  def find_the_whole_collection(title)
+  def find_the_whole_collection
 
-    @sampler = find_all_by_title(title)
-    @samplers = [@sampler] #add the video as the first sample
-    i = 0
-    while i <= Video.all.count do
-      if ( @sampler = find_next_sampler(@samplers[-1].end_time, @samplers[-1].end_point) )
-        @samplers << @sampler
+    @sampler = find_all_by_title
+    if @sampler
+      @samplers = [@sampler] #add the video as the first sample
+      i = 0
+      while i <= Video.count do
+        while_method
+        i += 1
       end
-      i + 1 #  this is an error . I'm interesting to raise, testing this part of the method
-    end
       return @samplers
+    else
+      return false
+    end
   end
 
+  def while_method
+    if ( @sampler = find_next_sampler(@samplers[-1].end_time, @samplers[-1].end_point) )
+      @samplers << @sampler
+    end
+  end
 
   # @sampler = Video.where(params[:search_path]).first
   # if @sampler
