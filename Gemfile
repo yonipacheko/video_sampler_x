@@ -8,6 +8,8 @@ gem 'haml-rails'
 gem 'sass-rails'
 gem 'uglifier'
 gem 'jquery-rails'
+gem  'nokogiri', '~> 1.6.1'
+
 
 group :development do
   gem 'sqlite3'
@@ -24,6 +26,8 @@ end
 
 group :test do
   gem 'database_cleaner', '1.2.0'
+  gem 'vcr'
+  gem 'webmock'
 end
 
 group :production do

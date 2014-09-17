@@ -15,15 +15,16 @@ class VideosController < ApplicationController
   end
 
   def search
-   #require 'pry'; binding.pry
 
     @results = Video.video_search(params[:search_term])
 
     if @results
-      redirect_to search_path, notice: 'All good!'
+      flash[:notice] = 'All good!'
+      render :search
     else
+      @results = []
       flash[:error] = "There's an error in your request"
-      redirect_to search_path
+      render :search
     end
 
   end
