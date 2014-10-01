@@ -11,12 +11,16 @@ class DownloadingData
   end
 
   def interval_data(point_a, point_b) # -2, +2 # the end user is gonna get a list of choices (dropdown with different choices)
-    start_point = @today - point_a
-    end_point  = @today + point_b
-    (start_point..end_point).each do |week_day|
-      #calling the API-method
-      fetching_data(week_day.year, week_day.mon, week_day.mday)
-      puts week_day #checking the week day
+    if (point_a.integer? && point_b.integer?)
+      start_point = @today - point_a
+      end_point  = @today + point_b
+      (start_point..end_point).each do |week_day|
+        #calling the API-method
+        fetching_data(week_day.year, week_day.mon, week_day.mday)
+      end
+      return true
+    else
+      return false
     end
   end
 
